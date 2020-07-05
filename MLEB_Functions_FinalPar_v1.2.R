@@ -399,7 +399,8 @@ env_eb$mleb <- function(data_list, model_list, mleb_control){
   Call <- match.call(expand.dots = FALSE)
   model_env$mleb_result$name_data_list <- as.list(Call)[[2]] # data_list used
   model_env$mleb_result$name_model_list <- as.list(Call)[[3]] # model_list used
-  model_env$mleb_result$model_list <- model_list   
+  model_env$mleb_result$model_list <- model_list
+  
   if (mleb_control$solveonly) {
     eb_betas <- lapply(1:length(data_list$resp_id), function(x)
       SolveID(idseq = x, data_list=data_list, model_env = model_env))
@@ -421,7 +422,9 @@ env_eb$mleb <- function(data_list, model_list, mleb_control){
     cat("-----------------------------------------------------------\n")
     print(kscale_hist[NULL,], right = TRUE, row.names = FALSE)
     cat("------------------------------------------------------------\n")
-    for (iter in 1:mleb_control$maxiter) {
+    iter <- 1
+    converge <- FALSE
+    while (iter <= mleb_control$maxiter & !converge) {
       time_beg_iter <- Sys.time()
       message(paste0("   Iteration ", iter))
       message("   Estimating Scale Factor")
@@ -500,9 +503,10 @@ env_eb$mleb <- function(data_list, model_list, mleb_control){
       best_iter <- match(best_fit, fit) # Picks iteration with best rlh
       if ((length(fit) - best_iter) >= mleb_control$conv_n){
         message(" Completed: Holdout Fit no longer improved")
-        break
+        converge <- TRUE
       } 
       message("")
+      iter <- iter + 1
     }}
 }
 
