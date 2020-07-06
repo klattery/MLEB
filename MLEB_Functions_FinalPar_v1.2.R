@@ -29,7 +29,7 @@ env_code$catcode <- function(kdata, kcol, codetype = 3, varout = NULL, reflev = 
     varout <- colnames(kdata)[kcol]
     if (is.null(varout)) varout <- paste0("V", kcol)
   }
-  colvec <- kdata[,kcol]
+  colvec <- kdata[,kcol, drop = TRUE] # drop = TRUE to deal with tibbles
   colvec[colvec == priorcode[1]] <- priorcode[2]
   na_vals <- is.na(colvec)
   kmax <- max(colvec, na.rm = TRUE)
